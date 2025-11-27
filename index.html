@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Опросник настроения "Смешарики" - Ретроспектива</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .instructions h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .card.selected {
+            border-color: #667eea;
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .emoji {
+            font-size: 3em;
+            margin-right: 15px;
+        }
+
+        .card-title {
+            flex: 1;
+        }
+
+        .character-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .mood-state {
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+
+        .card-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 15px;
+        }
+
+        .card-features li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #666;
+        }
+
+        .card-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .card-questions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .card-questions h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .card-questions ul {
+            list-style: none;
+        }
+
+        .card-questions li {
+            color: #666;
+            font-size: 0.85em;
+            padding: 5px 0;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .card-questions li:before {
+            content: "?";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Цвета для разных настроений */
+        .card-energetic {
+            border-left: 5px solid #10b981;
+        }
+
+        .card-thoughtful {
+            border-left: 5px solid #3b82f6;
+        }
+
+        .card-creative {
+            border-left: 5px solid #ec4899;
+        }
+
+        .card-melancholic {
+            border-left: 5px solid #8b5cf6;
+        }
+
+        .card-overloaded {
+            border-left: 5px solid #f59e0b;
+        }
+
+        .card-stable {
+            border-left: 5px solid #84cc16;
+        }
+
+        .card-focused {
+            border-left: 5px solid #06b6d4;
+        }
+
+        .card-caring {
+            border-left: 5px solid #f97316;
+        }
+
+        .card-wise {
+            border-left: 5px solid #6366f1;
+        }
+
+        .selection-info {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .selection-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .selected-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .selected-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reset-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .tips {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .tips h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .tips ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .tips li {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding-left: 45px;
+            position: relative;
+        }
+
+        .tips li:before {
+            content: "💡";
+            position: absolute;
+            left: 15px;
+            font-size: 1.5em;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.9;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .card {
+                break-inside: avoid;
+            }
+
+            .reset-btn {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Опросник настроения "Смешарики"</h1>
+            <p class="subtitle">Для ретроспективы команды</p>
+        </header>
+
+        <div class="instructions">
+            <h2>📋 Как использовать</h2>
+            <p><strong>Кликните на карточку</strong> персонажа, который лучше всего описывает ваше текущее настроение
+                после спринта. Можно выбрать несколько персонажей, если настроение смешанное. Это поможет команде
+                обсудить эмоциональное состояние и определить действия для следующего спринта.</p>
+        </div>
+
+        <div class="cards-grid">
+            <!-- Крош -->
+            <div class="card card-energetic" data-character="Крош" data-emoji="🐰">
+                <div class="card-header">
+                    <div class="emoji">🐰</div>
+                    <div class="card-title">
+                        <div class="character-name">Крош</div>
+                        <div class="mood-state">Энергичный и Оптимистичный</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    <strong>Полон энергии, готов к новым задачам!</strong>
+                </div>
+                <ul class="card-features">
+                    <li>Всё идёт отлично, чувствую драйв</li>
+                    <li>Много идей и желания действовать</li>
+                    <li>Спринт прошёл продуктивно</li>
+                    <li>Вижу прогресс и результаты</li>
+                </ul>
+                <div class="card-questions">
+                    <h4>Вопросы для обсуждения:</h4>
+                    <ul>
+                        <li>Что дало вам такой заряд энергии?</li>
+                        <li>Как мы можем поддержать этот настрой?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ёжик -->
+            <div class="card card-thoughtful" data-character="Ёжик" data-emoji="🦔">
+                <div class="card-header">
+                    <div class="emoji">🦔</div>
+                    <div class="card-title">
+                        <div class="character-name">Ёжик</div>
+                        <div class="mood-state">Спокойный и Вдумчивый</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    <strong>Всё стабильно, но есть о чём подумать</strong>
+                </div>
+                <ul class="card-features">
+                    <li>Работа идёт ровно, без сюрпризов</li>
+                    <li>Немного тревожусь о некоторых моментах</li>
+                    <li>Нужно время, чтобы обдумать ситуацию</li>
+                    <li>Хочу больше ясности</li>
+                </ul>
+                <div class="card-questions">
+                    <h4>Вопросы для обсуждения:</h4>
+                    <ul>
+                        <li>Какие моменты вызывают сомнения?</li>
+                        <li>Что поможет вам чувствовать себя увереннее?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Нюша -->
+            <div class="card card-creative" data-character="Нюша" data-emoji="🐷">
+                <div class="card-header">
+                    <div class="emoji">🐷</div>
+                    <div class="card-title">
+                        <div class="character-name">Нюша</div>
+                        <div class="mood-state">Вдохновлённая и Креативная</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    <strong>Творческий подъём!</strong>
+                </div>
+                <ul class="card-features">
+                    <li>Нашёл интересные решения</li>
+                    <li>Работа приносит удовольствие</li>
+                    <li>Получается создавать что-то новое</li>
+                    <li>Чувствую поддержку команды</li>
+                </ul>
+                <div class="card-questions">
+                    <h4>Вопросы для обсуждения:</h4>
+                    <ul>
+                        <li>Чем вы вдохновлялись в этом спринте?</li>
+                        <li>Какие креативные решения вы нашли?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Бараш -->
+            <div class="card card-melancholic" data-character="Бараш" data-emoji="🐏">
+                <div class="card-header">
+                    <div class="emoji">🐏</div>
+                    <div class="card-title">
+                        <div class="character-name">Бараш</div>
+                        <div class="mood-state">Меланхоличный и Задумчивый</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    <strong>Немного грустно и устало</strong>
+                </div>
+                <ul class="card-features">
+                    <li>Не всё получилось, как хотелось</li>
+                    <li>Чувствую лёгкую грусть или разочарование</li>
+                    <li>Нужна поддержка команды</li>
+                    <li>Хочется перемен</li>
+                </ul>
+                <div class="card-questions">
+                    <h4>Вопросы для обсуждения:</h4>
+                    <ul>
+                        <li>Что вас расстроило или разочаровало?</li>
+                        <li>Как команда может вас поддержать?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Лосяш -->
+            <div class="card card-overloaded" data-character="Лосяш" data-emoji="🦌">
+                <div class="card-header">
+                    <div class="emoji">🦌</div>
+                    <div class="card-title">
+                        <div class="character-name">Лосяш</div>
+                        <div class="mood-state">Перегруженный и Уставший</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    <strong>Слишком много информации и задач!</strong>
+                </div>
+                <ul class="card-features">
+                    <li>Ощущение перегрузки</li>
+                    <li>Много задач одновременно</li>
+                    <li>Голова идёт кругом</li>
+                    <li>Нужна разгрузка и фокус</li>
+                </ul>
+                <div class="card-questions">
+                    <h4>Вопросы для обсуждения:</h4>
+                    <ul>
+                        <li>Что больше всего перегружает?</li>
+                        <li>Как можем перераспределить нагрузку?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Копатыч -->
+            <div class="card card-stable" data-character="Копатыч" data-emoji="🐻">
+                <div class="card-header">
+                    <div class="emoji">🐻</div>
+                    <div class="card-title">
+                        <div class="character-name">Копатыч</div>
+                        <div class="mood-state">Стабильный и Работящий</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    <strong>Делаю свою работу спокойно и уверенно</strong>
+                </div>
+                <ul class="card-features">
+                    <li>Работа идёт как обычно</li>
+                    <li>Всё под контролем</li>
+                    <li>Знаю, что делать</li>
+                    <li>Стабильность и предсказуемость</li>
+                </ul>
+                <div class="card-questions">
+                    <h4>Вопросы для обсуждения:</h4>
+                    <ul>
+                        <li>Что помогает вам сохранять стабильность?</li>
+                        <li>Нужны ли какие-то изменения?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Пин -->
+            <div class="card card-focused" data-character="Пин" data-emoji="🐧">
+                <div class="card-header">
+                    <div class="emoji">🐧</div>
+                    <div class="card-title">
+                        <div class="character-name">Пин</div>
+                        <div class="mood-state">Сфокусированный на Решениях</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    <strong>Нашёл интересную проблему и решаю её!</strong>
+                </div>
+                <ul class="card-features">
+                    <li>Увлечён техническими задачами</li>
+                    <li>Углубился в решение проблемы</li>
+                    <li>Экспериментирую и изобретаю</li>
+                    <li>В потоке</li>
+                </ul>
+                <div class="card-questions">
+                    <h4>Вопросы для обсуждения:</h4>
+                    <ul>
+                        <li>Какие интересные задачи вы решали?</li>
+                        <li>Нужна ли помощь в текущих экспериментах?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Совунья -->
+            <div class="card card-caring" data-character="Совунья" data-emoji="🦉">
+                <div class="card-header">
+                    <div class="emoji">🦉</div>
+                    <div class="card-title">
+                        <div class="character-name">Совунья</div>
+                        <div class="mood-state">Заботливая и Наставническая</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    <strong>Помогаю команде и делюсь опытом</strong>
+                </div>
+                <ul class="card-features">
+                    <li>Поддерживал коллег</li>
+                    <li>Делился знаниями</li>
+                    <li>Менторил других</li>
+                    <li>Забочусь о команде</li>
+                </ul>
+                <div class="card-questions">
+                    <h4>Вопросы для обсуждения:</h4>
+                    <ul>
+                        <li>Кому вы помогали в этом спринте?</li>
+                        <li>Что можем сделать для взаимопомощи?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Кар-Карыч -->
+            <div class="card card-wise" data-character="Кар-Карыч" data-emoji="🦊">
+                <div class="card-header">
+                    <div class="emoji">🦊</div>
+                    <div class="card-title">
+                        <div class="character-name">Кар-Карыч</div>
+                        <div class="mood-state">Мудрый и Философский</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    <strong>Смотрю на ситуацию со стороны</strong>
+                </div>
+                <ul class="card-features">
+                    <li>Вижу картину в целом</li>
+                    <li>Анализирую процессы</li>
+                    <li>Размышляю о долгосрочной перспективе</li>
+                    <li>Спокоен и рассудителен</li>
+                </ul>
+                <div class="card-questions">
+                    <h4>Вопросы для обсуждения:</h4>
+                    <ul>
+                        <li>Какие инсайты вы получили?</li>
+                        <li>Что заметили в работе команды?</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="selection-info">
+            <h3>Выбранные персонажи</h3>
+            <p id="selection-text">Кликните на карточки, чтобы выбрать персонажей</p>
+            <div class="selected-list" id="selected-list"></div>
+            <button class="reset-btn" id="reset-btn" style="display: none;">Сбросить выбор</button>
+        </div>
+
+        <div class="tips">
+            <h3>💡 Советы для использования</h3>
+            <ul>
+                <li>Используйте это как ледокол в начале ретроспективы</li>
+                <li>Дайте каждому время подумать перед выбором</li>
+                <li>Создайте безопасную атмосферу - любое настроение валидно</li>
+                <li>Переходите от настроений к конкретным действиям</li>
+                <li>Можно использовать для отслеживания динамики от спринта к спринту</li>
+                <li>Попробуйте выбрать настроение на начало и конец спринта</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Хорошей ретроспективы! 🎉</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Сделано с использованием Claude Code</p>
+        </footer>
+    </div>
+
+    <script>
+        const cards = document.querySelectorAll('.card');
+        const selectedList = document.getElementById('selected-list');
+        const selectionText = document.getElementById('selection-text');
+        const resetBtn = document.getElementById('reset-btn');
+        const selectedCharacters = new Set();
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const character = card.dataset.character;
+                const emoji = card.dataset.emoji;
+
+                if (card.classList.contains('selected')) {
+                    card.classList.remove('selected');
+                    selectedCharacters.delete(character);
+                } else {
+                    card.classList.add('selected');
+                    selectedCharacters.add(character);
+                }
+
+                updateSelection();
+            });
+        });
+
+        resetBtn.addEventListener('click', () => {
+            cards.forEach(card => card.classList.remove('selected'));
+            selectedCharacters.clear();
+            updateSelection();
+        });
+
+        function updateSelection() {
+            if (selectedCharacters.size === 0) {
+                selectionText.style.display = 'block';
+                selectedList.innerHTML = '';
+                resetBtn.style.display = 'none';
+            } else {
+                selectionText.style.display = 'none';
+                selectedList.innerHTML = '';
+
+                selectedCharacters.forEach(character => {
+                    const card = Array.from(cards).find(c => c.dataset.character === character);
+                    const emoji = card.dataset.emoji;
+
+                    const badge = document.createElement('div');
+                    badge.className = 'selected-badge';
+                    badge.innerHTML = `<span>${emoji}</span><span>${character}</span>`;
+                    selectedList.appendChild(badge);
+                });
+
+                resetBtn.style.display = 'inline-block';
+            }
+        }
+    </script>
+</body>
+
+</html>
+
